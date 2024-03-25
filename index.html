@@ -1,50 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Click To Run Method</title>
-  <style>
-    #app {
-      border: black dashed 1px;
-      width: 200px;
-      padding: 0 20px 20px 20px;
-    }
-    #app > div {
-      width: 140px;
-      height: 60px;
-      background-color: lightgreen;
-      padding: 20px;
-      font-weight: bold;
-      font-family: 'Courier New', Courier, monospace;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <!-- Vue.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <!-- Axios CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-
-<h1>Example: Click to run a method</h1>
-
-<div id="app">
-  <p>Click on the box below:</p>
-  <div v-on:click="changeText">
-    {{ text }}
+  <div id="app">
+    <weather></weather>
   </div>
-</div>
 
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script>
-  const app = Vue.createApp({
-    data() {
-      return {
-        text: ''
-      }
-    },
-    methods: {
-      changeText() {
-        this.text = 'Hello World!'
-      }
-    }
-  })
- app.mount('#app')
-</script>
+  <script>
+    Vue.component('weather', {
+      template: `
+        <div>
+          <h1>Weather App</h1>
+          <div v-if="loading">Loading...</div>
+          <div v-else-if="error">{{ error }}</div>
+          <div v-else>
+            <p>City: {{ weather.city }}</p>
+            <p>Temperature: {{ weather.temperature }}°C</p>
+            <p>Description: {{ weather.description }}</p>
+          </div>
+        </div>
+      `,
+      data() {
+        return {
+          weather: {},
+          loading: true,
+          error: null
+        };
+      },
+      mounted() {
+        this.fetchWeatherData();
+      },
+      methods: {
+        fetchWeatherData() {
+          const API_KEY = 'YOUR_API_KEY';
+          const CITY = 'Delhi
+            ';
+          const URL = `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=4de4db30a24565b1ba581198fbedf9e4`;
 
+          axios.get(URL)
+            .then(response => {
+              this.weather = {
+                city: response.data.location.name,
+                temperature: response.data.current.temp_c,
+                description: response.data.current.condition.text
+              };
+              this.loading = false;
+            })
+            .catch(error => {
+              this.loading = false;
+              this.error = 'Error fetching weather data';
+              console.error(error);
+            });
+        }
+      }
+    });
+
+    new Vue({
+      el: '#app'
+    });
+  </script>
 </body>
 </html>
