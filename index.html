@@ -43,13 +43,13 @@
           const API_KEY = 'YOUR_API_KEY';
           const CITY = 'Delhi';
           const URL = `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=4de4db30a24565b1ba581198fbedf9e4`;
-
+        
           axios.get(URL)
             .then(response => {
               this.weather = {
-                city: response.data.location.name,
-                temperature: response.data.current.temp_c,
-                description: response.data.current.condition.text
+                city: response.data.name,
+                temperature: response.data.main.temp,
+                description: response.data.weather[0].description
               };
               this.loading = false;
             })
@@ -59,6 +59,7 @@
               console.error(error);
             });
         }
+        
       }
     });
 
